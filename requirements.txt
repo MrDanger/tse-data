@@ -1,0 +1,5 @@
+pytse-client==0.16
+requests==2.31.0
+gspread==5.10.0
+pandas==2.0.3
+python-dotenv==1.0.0
