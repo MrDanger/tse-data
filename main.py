@@ -16,5 +16,12 @@ try:
         run_continuous_lazy(f'./fetch_data.py {symbol}', 60, end_time.strftime('%Y-%m-%dT%H:%M:%S'),
                             start_time.strftime('%Y-%m-%dT%H:%M:%S'))
         run_lazy(f'./fetch_data.py {symbol}', 0, end_hour - 1, 59, 30)
+        run_continuous_lazy(f'./calc_average.py {symbol} 3', 180,
+                            now.replace(hour=start_hour, minute=3, second=1).strftime('%Y-%m-%dT%H:%M:%S'),
+                            now.replace(hour=end_hour, minute=0, second=1).strftime('%Y-%m-%dT%H:%M:%S'))
+        run_continuous_lazy(f'./calc_average.py {symbol} 5', 300,
+                            now.replace(hour=start_hour, minute=5, second=1).strftime('%Y-%m-%dT%H:%M:%S'),
+                            now.replace(hour=end_hour, minute=0, second=1).strftime('%Y-%m-%dT%H:%M:%S'))
+
 except Exception as e:
     print(e)

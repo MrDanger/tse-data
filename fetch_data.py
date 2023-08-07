@@ -3,7 +3,6 @@ import sys
 from datetime import datetime
 import pandas as pd
 import gspread
-import time
 
 symbol_name = sys.argv[1]
 hour = datetime.now().strftime('%H:%M:%S')
@@ -13,14 +12,7 @@ credential = 'credentials.json'
 try:
     # st_time = time.time()
     ticker = Ticker(symbol_name)
-    message = f'symbol name: {symbol_name}\n' \
-              f'date: {date}\n' \
-              f'NAV price: {ticker.nav}\n'
     real_time_data = ticker.get_ticker_real_time_info_response()
-    message += f'last trade price: {real_time_data.last_price}\n' \
-               f'deals count: {real_time_data.count}\n' \
-               f'deals volume: {real_time_data.volume}\n' \
-               f'final price: {real_time_data.adj_close}\n'
     total_buyers = 0
     total_sellers = 0
     total_buyers_vol = 0
@@ -31,20 +23,8 @@ try:
     for order in real_time_data.sell_orders:
         total_sellers_vol += order.volume
         total_sellers += order.price
-    message += f'total buyers count: {total_buyers}\n' \
-               f'total buyers volume: {total_buyers_vol}\n' \
-               f'total sellers count: {total_sellers}\n' \
-               f'total sellers volume: {total_sellers_vol}\n'
     real_data = ticker.client_types
-    message += f'individual buy volume: {real_data.individual_buy_vol[0]}\n' \
-               f'individual buy count: {real_data.individual_buy_count[0]}\n' \
-               f'individual sell volume: {real_data.individual_sell_vol[0]}\n' \
-               f'individual sell count: {real_data.individual_sell_count[0]}\n' \
-               f'corporate buy volume: {real_data.corporate_buy_vol[0]}\n' \
-               f'corporate buy count: {real_data.corporate_buy_count[0]}\n' \
-               f'corporate sell volume: {real_data.corporate_sell_vol[0]}\n' \
-               f'corporate sell count: {real_data.corporate_sell_count[0]}\n'
-    # print(message)
+
     gc = gspread.service_account(filename=credential)
     sheet_name = symbol_name
     sh = gc.open(sheet_name)

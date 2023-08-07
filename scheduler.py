@@ -12,7 +12,6 @@ def run_lazy(file, day_offset=0, hour=0, minute=0, second=0, repeat=True):
     :param hour: hour at which task should start
     :param minute: minute at which task should start
     :param second: second at which task should start
-    :param timezone: defines timezone
     :param repeat: indicates the task should repeat continuously
     :return: nothing
     """
