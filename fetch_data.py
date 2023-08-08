@@ -23,7 +23,6 @@ try:
     for order in real_time_data.sell_orders:
         total_sellers_vol += order.volume
         total_sellers += order.price
-    real_data = ticker.client_types
 
     gc = gspread.service_account(filename=credential)
     sheet_name = symbol_name
@@ -35,14 +34,14 @@ try:
          'deals volume': real_time_data.volume, 'final price': real_time_data.adj_close,
          'total buyers count': total_buyers, 'total buyers volume': total_buyers_vol,
          'total sellers count': total_sellers, 'total sellers volume': total_sellers_vol,
-         'individual buy volume': real_data.individual_buy_vol[0],
-         'individual buy count': real_data.individual_buy_count[0],
-         'individual sell volume': real_data.individual_sell_vol[0],
-         'individual sell count': real_data.individual_sell_count[0],
-         'corporate buy volume': real_data.corporate_buy_vol[0],
-         'corporate buy count': real_data.corporate_buy_count[0],
-         'corporate sell volume': real_data.corporate_sell_vol[0],
-         'corporate sell count': real_data.corporate_sell_count[0], }]
+         'individual buy volume': real_time_data.individual_trade_summary.buy_vol,
+         'individual buy count': real_time_data.individual_trade_summary.buy_count,
+         'individual sell volume': real_time_data.individual_trade_summary.sell_vol,
+         'individual sell count': real_time_data.individual_trade_summary.sell_count,
+         'corporate buy volume': real_time_data.corporate_trade_summary.buy_vol,
+         'corporate buy count': real_time_data.corporate_trade_summary.buy_count,
+         'corporate sell volume': real_time_data.corporate_trade_summary.sell_vol,
+         'corporate sell count': real_time_data.corporate_trade_summary.sell_count, }]
     df = pd.DataFrame(new_data)
     worksheet.append_rows(df.values.tolist())
     # print(f'total time: {time.time() - st_time}')
