@@ -48,7 +48,7 @@ def run_lazy(file, day_offset=0, hour=0, minute=0, second=0, repeat=True):
     print('"%s" is scheduled to run at %s' % (file, y.strftime('%m/%d/%Y, %H:%M:%S')))
 
 
-def run_continuous_lazy(file, interval=30, end_time=None, start_time=None):
+def run_continuous_lazy(file, char: str, interval=30, end_time=None, start_time=None):
     """
     Schedules a file execution
 
@@ -56,6 +56,7 @@ def run_continuous_lazy(file, interval=30, end_time=None, start_time=None):
     :param interval: interval between task running in seconds, default is 30 seconds
     :param end_time: end of repeat
     :param start_time: start to repeat
+    :param char: temp char
     :return: nothing
     """
 
@@ -72,7 +73,7 @@ def run_continuous_lazy(file, interval=30, end_time=None, start_time=None):
             _start_time = start_time + timedelta(days=1)
             print(_start_time.strftime("%Y-%m-%dT%H:%M:%S"))
             run_lazy(
-                f'./run_continues.py {file} {interval} {_end_time.strftime("%Y-%m-%dT%H:%M:%S")} {_start_time.strftime("%Y-%m-%dT%H:%M:%S")}',
+                f'./run_continues.py {file} {char} {interval} {_end_time.strftime("%Y-%m-%dT%H:%M:%S")} {_start_time.strftime("%Y-%m-%dT%H:%M:%S")}',
                 hour=_start_time.hour, minute=_start_time.minute, second=_start_time.second, repeat=False)
             return
         t = Timer(interval, run)
@@ -88,9 +89,9 @@ def run_continuous_lazy(file, interval=30, end_time=None, start_time=None):
         new_end_time = end_time + timedelta(days=1)
         new_start_time = start_time + timedelta(days=1)
         run_lazy(
-            f'./run_continues.py {file} {interval} {new_end_time.strftime("%Y-%m-%dT%H:%M:%S")} {new_start_time.strftime("%Y-%m-%dT%H:%M:%S")}',
+            f'./run_continues.py {file} {char} {interval} {new_end_time.strftime("%Y-%m-%dT%H:%M:%S")} {new_start_time.strftime("%Y-%m-%dT%H:%M:%S")}',
             hour=new_start_time.hour, minute=new_start_time.minute, second=new_start_time.second, repeat=False)
     elif datetime.now() < start_time:
         run_lazy(
-            f'./run_continues.py {file} {interval} {end_time.strftime("%Y-%m-%dT%H:%M:%S")} {start_time.strftime("%Y-%m-%dT%H:%M:%S")}',
+            f'./run_continues.py {file}' + f'{char} {interval} {end_time.strftime("%Y-%m-%dT%H:%M:%S")} {start_time.strftime("%Y-%m-%dT%H:%M:%S")}',
             hour=start_time.hour, minute=start_time.minute, second=start_time.second, repeat=False)

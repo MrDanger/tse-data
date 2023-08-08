@@ -33,7 +33,6 @@ try:
                  'corporate buy count': last_rows['corporate buy count'].mean(),
                  'corporate sell volume': last_rows['corporate sell volume'].mean(),
                  'corporate sell count': last_rows['corporate sell count'].mean(), }]
-    print(new_data)
     df = pd.DataFrame(new_data)
     sheet_name = f'{symbol_name}_{count}'
     sh1 = gc.open(sheet_name)
