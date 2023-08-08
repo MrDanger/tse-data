@@ -1,8 +1,8 @@
 from pytse_client.ticker import Ticker
 import sys
-from datetime import datetime
 import pandas as pd
 import gspread
+from jdatetime import datetime
 
 symbol_name = sys.argv[1]
 hour = datetime.now().strftime('%H:%M:%S')
@@ -46,5 +46,5 @@ try:
     worksheet.append_rows(df.values.tolist())
     # print(f'total time: {time.time() - st_time}')
 
-except EOFError as e:
+except Exception as e:
     print(e)
