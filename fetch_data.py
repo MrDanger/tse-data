@@ -3,15 +3,26 @@ import sys
 import pandas as pd
 import gspread
 from jdatetime import datetime
+import os
+from dotenv import load_dotenv
 
-symbol_name = sys.argv[1]
+load_dotenv()
+
+symbol_name = sys.argv[1].replace('_', ' ')
+sheet_name = os.environ.get('SHEET_NAME', default='temp')
 hour = datetime.now().strftime('%H:%M:%S')
 date = datetime.now().strftime('%Y-%m-%d')
 credential = 'credentials.json'
 
 try:
     # st_time = time.time()
-    ticker = Ticker(symbol_name)
+    try:
+        ticker = Ticker(symbol_name)
+    except ValueError:
+        from static import stock_names
+        index = stock_names.get(symbol_name)
+        ticker = Ticker("", index=index)
+
     real_time_data = ticker.get_ticker_real_time_info_response()
     total_buyers = 0
     total_sellers = 0
@@ -25,9 +36,9 @@ try:
         total_sellers += order.price
 
     gc = gspread.service_account(filename=credential)
-    sheet_name = symbol_name
     sh = gc.open(sheet_name)
-    worksheet = sh.get_worksheet(0)
+    worksheet = sh.worksheet(symbol_name + ' 1')
+
     new_data = [
         {'symbol': symbol_name, 'data': date, 'hour': hour, 'NAV price': ticker.nav,
          'last trade price': real_time_data.last_price, 'deals count': real_time_data.count,
@@ -43,7 +54,10 @@ try:
          'corporate sell volume': real_time_data.corporate_trade_summary.sell_vol,
          'corporate sell count': real_time_data.corporate_trade_summary.sell_count, }]
     df = pd.DataFrame(new_data)
-    worksheet.append_rows(df.values.tolist())
+    if not worksheet.get_all_records():
+        worksheet.append_rows([df.columns.tolist()] + df.values.tolist())
+    else:
+        worksheet.append_rows(df.values.tolist())
     # print(f'total time: {time.time() - st_time}')
 
 except Exception as e:

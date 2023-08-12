@@ -2,9 +2,14 @@ import sys
 from jdatetime import datetime
 import pandas as pd
 import gspread
+import os
+from dotenv import load_dotenv
 
-symbol_name = sys.argv[1]
-count = int(sys.argv[2])
+load_dotenv()
+
+symbol_name = sys.argv[2].replace('_', ' ')
+count = int(sys.argv[1])
+sheet_name = os.environ.get('SHEET_NAME', default='temp')
 
 hour = datetime.now().strftime('%H:%M:%S')
 date = datetime.now().strftime('%Y-%m-%d')
@@ -12,8 +17,8 @@ credential = 'credentials.json'
 
 try:
     gc = gspread.service_account(filename=credential)
-    sh = gc.open(symbol_name)
-    worksheet = sh.get_worksheet(0)
+    sh = gc.open(sheet_name)
+    worksheet = sh.worksheet(symbol_name + ' 1')
     data = worksheet.get_all_records()
     df = pd.DataFrame(data)
     last_rows = df.tail(count)
@@ -34,9 +39,11 @@ try:
                  'corporate sell volume': round(last_rows['corporate sell volume'].mean()),
                  'corporate sell count': round(last_rows['corporate sell count'].mean()), }]
     df = pd.DataFrame(new_data)
-    sheet_name = f'{symbol_name}_{count}'
-    sh1 = gc.open(sheet_name)
-    worksheet1 = sh1.get_worksheet(0)
-    worksheet1.append_rows(df.values.tolist())
-except EOFError as e:
+    sheet_name = f'{symbol_name} {count}'
+    worksheet1 = sh.worksheet(sheet_name)
+    if not worksheet1.get_all_records():
+        worksheet1.append_rows([df.columns.tolist()] + df.values.tolist())
+    else:
+        worksheet1.append_rows(df.values.tolist())
+except Exception as e:
     print(e)
