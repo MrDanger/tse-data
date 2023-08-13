@@ -93,5 +93,5 @@ def run_continuous_lazy(file, char: str, interval=30, end_time=None, start_time=
             hour=new_start_time.hour, minute=new_start_time.minute, second=new_start_time.second, repeat=False)
     elif datetime.now() < start_time:
         run_lazy(
-            f'./run_continues.py {file}' + f'{char} {interval} {end_time.strftime("%Y-%m-%dT%H:%M:%S")} {start_time.strftime("%Y-%m-%dT%H:%M:%S")}',
+            f'./run_continues.py {file}' + f' {char} {interval} {end_time.strftime("%Y-%m-%dT%H:%M:%S")} {start_time.strftime("%Y-%m-%dT%H:%M:%S")}',
             hour=start_time.hour, minute=start_time.minute, second=start_time.second, repeat=False)
